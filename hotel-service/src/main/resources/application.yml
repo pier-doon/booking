@@ -1,0 +1,21 @@
+server:
+  port: 15500
+
+spring:
+  data:
+    mongodb:
+      username: admin
+      password: root
+      host: localhost
+      port: 27017
+      database: hotel-db
+
+minio:
+  bucket:
+    name: hotel
+  default:
+    folder: /
+  access:
+    name: Q3AM3UQ867SPQQA43P2F
+    secret: zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+  url: http://127.0.0.1:9000
