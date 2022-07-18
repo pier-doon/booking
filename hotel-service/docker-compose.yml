@@ -1,32 +1,76 @@
-version: '3'
+version: "3.8"
 services:
-  hotel-db:
-    image: 'mongo:latest'
-    container_name: 'hotel-db'
-    environment:
-      - MONGO_INITDB_DATABASE=hotel-db
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=root
-    volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./mongo-volume:/data/db
+  mongo:
+    image: mongo:latest
+    container_name: hoteldb
+    hostname: mongo
+    restart: unless-stopped
     ports:
-      - '27017:27017'
+      - $MONGO_HOST_PORT:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_ROOT_PASSWORD
+      - MONGO_INITDB_DATABASE=$MONGO_DB
+      - MONGO_DB_USERNAME=$MONGO_DB_USERNAME
+      - MONGO_DB_PASSWORD=$MONGO_DB_PASSWORD
+    volumes:
+      - $MONGO_DATA_HOST_PATH:/data/db/
+      - $MONGO_LOG_HOST_PATH:/var/log/mongodb/
+      - $MONGO_INITDB_SCRIPTS_HOST_PATH:/docker-entrypoint-initdb.d/
+    networks:
+      - $NETWORK_NAME
+    command: [ "--bind_ip", "0.0.0.0" ]
+
+
+
   minio:
     image: minio/minio:latest
-    command: server --console-address ":9001" /data/
+    command: server --address 0.0.0.0:9000 --console-address ":9001" /data/
     ports:
       - "9000:9000"
       - "9001:9001"
+#      - $MINIO_HOST_PORT:9000
+#      - $MINIO_UI_PORT:9001
     environment:
-      MINIO_ROOT_USER: Q3AM3UQ867SPQQA43P2F
-      MINIO_ROOT_PASSWORD: zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+      - MINIO_ROOT_USER=$MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASS
+      - MINIO_STORAGE_USE_HTTPS=False
+    networks:
+      - search-hotel-network
     volumes:
-      - minio-storage:/data
+      - $MINIO_DATA_HOST_PATH:/data
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
       timeout: 20s
       retries: 3
-volumes:
-  minio-storage:
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: $APP_NAME
+    container_name: $APP_NAME
+    restart: on-failure
+    depends_on:
+      - mongo
+      - minio
+    ports:
+      - $SERVER_HOST_PORT:15500
+    environment:
+      - SPRING_DATA_MONGODB_USERNAME=$MONGO_DB_USERNAME
+      - SPRING_DATA_MONGODB_PASSWORD=$MONGO_DB_PASSWORD
+      - SPRING_DATA_MONGODB_DATABASE=$MONGO_DB
+      - SPRING_DATA_MONGODB_PORT=$MONGO_HOST_PORT
+      - SPRING_SERVER_PORT=$SERVER_HOST_PORT
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - MINIO_ACCESS_NAME=$MINIO_ROOT_USER
+      - MINIO_ACCESS_SECRET=$MINIO_ROOT_PASS
+      - MINIO_URL=http://minio:9000
+    networks:
+      - search-hotel-network
+
+
+networks:
+  search-hotel-network:
+    external: true

@@ -1,21 +1,24 @@
 server:
   port: 15500
-
 spring:
-  data:
-    mongodb:
-      username: admin
-      password: root
-      host: localhost
-      port: 27017
-      database: hotel-db
+  profiles:
+    active: local
+  #  batch:
+  #    job:
+  #      enabled: false
+  servlet:
+    multipart:
+      max-file-size: 51200KB
+      max-request-size: 51200KB
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
 
-minio:
-  bucket:
-    name: hotel
-  default:
-    folder: /
-  access:
-    name: Q3AM3UQ867SPQQA43P2F
-    secret: zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
-  url: http://127.0.0.1:9000
+management:
+  endpoints:
+    web:
+      exposure:
+        include:*
+  endpoint:
+    health:
+      show-details: always

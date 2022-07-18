@@ -2,8 +2,11 @@ package com.ws.hotelsearch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
+@EnableMongoRepositories
+//@EnableBatchProcessing
 public class HotelSearchApplication {
 
     public static void main(String[] args) {

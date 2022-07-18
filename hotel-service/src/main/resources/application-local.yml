@@ -1,0 +1,27 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 51200KB
+      max-request-size: 51200KB
+  data:
+    mongodb:
+      username: admin
+      password: root
+      host: 127.0.0.1
+      port: 27017
+      database: hotel-db
+      auto-index-creation: true
+  devtools:
+    restart:
+      poll-interval: 2s
+      quiet-period: 1s
+
+minio:
+  bucket:
+    name: hotel
+  default:
+    folder: /
+  access:
+    name: admin
+    secret: rootpass
+  url: http://127.0.0.1:9000

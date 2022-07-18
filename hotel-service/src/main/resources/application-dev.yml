@@ -1,0 +1,42 @@
+
+
+#spring:
+#  data:
+#    mongodb:
+#      username: ${MONGO_USER}
+#      #     h0t3lus3r
+#      password:
+#      #     Wh0Kn0wz
+#      host: app_db
+#      #     localhost
+#      port: ${MONGO_PORT}
+#      #     27017
+#      database: ${MONGO_DB_NAME}
+#      #     hotel-db
+#      auto-index-creation: true
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      auto-index-creation: true
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+      host: localhost
+      port: ${MONGO_HOST_PORT}
+      database: ${MONGO_DB}
+
+minio:
+  secure: false
+  bucket:
+    name: hotel
+  default:
+    folder: /
+  access:
+    name: ${MINIO_USER}
+    #   Q3AM3UQ867SPQQA43P2F
+    secret: ${MINIO_PASS}
+    #   zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+  url: ${MINIO_URL}
+  #    http://127.0.0.1:9000
+server:
+  port: ${SERVER_PORT}
