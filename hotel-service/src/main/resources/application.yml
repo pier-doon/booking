@@ -1,6 +1,8 @@
 server:
   port: 15500
 spring:
+  application:
+    name: search-service
   profiles:
     active: local
   #  batch:
@@ -10,15 +12,17 @@ spring:
     multipart:
       max-file-size: 51200KB
       max-request-size: 51200KB
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include:*
-  endpoint:
-    health:
-      show-details: always
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    hostname: localhost
+
